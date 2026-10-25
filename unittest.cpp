@@ -81,7 +81,7 @@ void test_edge_cases() {
 
 // Test 2: Kiểm tra vét cạn mọi hoán vị nhỏ (V = 1..6)
 void test_exhaustive_small_permutations() {
-    std::cout << "\n=== 2. KIỂM THỬ VÉT CẠN MỌI HOÁN VỊ NHỎ (V = 1..6) ===\n";
+    std::cout << "\n=== 2. KIỂM THỬ VÉT CẠN MỌI HOÁN VỊ NHỎ (V = 1..10) ===\n";
     int total_tested = 0;
     for (int V = 1; V <= 10; ++V) {
         std::vector<int> perm(V);
