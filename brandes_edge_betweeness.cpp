@@ -11,7 +11,8 @@
 /**
  * Thuật toán Brandes tiêu chuẩn (2001) tính Độ trung gian cạnh (Edge Betweenness Centrality)
  * trên Đồ thị Hoán vị (Permutation Graph) G = (V, E).
- * Độ phức tạp: O(V * E), tương đương O(V^3) trên đồ thị hoán vị dày.
+ * - Độ phức tạp tiền xử lý toàn bộ cạnh: O(V * E), suy biến thành Theta(V^3) trên đồ thị dày.
+ * - Truy vấn cặp (u, v) sau khi tính toàn bộ cạnh: O(1) qua bảng tra cứu.
  */
 class BrandesEdgeBetweenness {
 public:
@@ -19,8 +20,10 @@ public:
     std::vector<int> pi;
     std::vector<std::pair<int, int>> edges; // Danh sách cạnh (v, u) với 1 <= v < u <= V và pi[v] > pi[u]
     std::vector<std::vector<std::pair<int, int>>> adj; // adj[u] chứa danh sách {v, edge_id}
+    std::vector<std::vector<int>> edge_id_matrix;      // Ma trận tra cứu chỉ số cạnh trong O(1)
+    std::vector<double> EB;                            // Mảng kết quả độ trung gian cạnh
 
-    // Lưu trữ thông tin theo từng nguồn s để kiểm thử chuyên sâu (nếu cần)
+    // Lưu trữ thông tin theo từng nguồn s để kiểm thử chuyên sâu
     std::vector<std::vector<int>> dist_all;
     std::vector<std::vector<long long>> sigma_all;
     std::vector<std::vector<double>> delta_all;
@@ -32,6 +35,7 @@ public:
             pi[i] = permutation[i - 1];
         }
         adj.resize(V + 1);
+        edge_id_matrix.assign(V + 1, std::vector<int>(V + 1, -1));
         build_graph();
     }
 
@@ -48,6 +52,7 @@ public:
                     edges.push_back({v, u});
                     adj[v].push_back({u, edge_id});
                     adj[u].push_back({v, edge_id});
+                    edge_id_matrix[v][u] = edge_id_matrix[u][v] = edge_id;
                 }
             }
         }
@@ -56,7 +61,7 @@ public:
     // Thực thi thuật toán Brandes tiêu chuẩn trong O(V * E)
     std::vector<double> compute_edge_betweenness(bool store_states = false) {
         int E = static_cast<int>(edges.size());
-        std::vector<double> EB(E, 0.0);
+        EB.assign(E, 0.0);
 
         if (store_states) {
             dist_all.assign(V + 1, std::vector<int>(V + 1, -1));
@@ -120,6 +125,14 @@ public:
         }
 
         return EB;
+    }
+
+    // Truy vấn độ trung gian cạnh cho cặp (u, v); trả về -1.0 nếu không có cạnh
+    double query_edge(int u, int v) const {
+        if (u < 1 || u > V || v < 1 || v > V || u == v) return -1.0;
+        int id = edge_id_matrix[u][v];
+        if (id < 0) return -1.0;
+        return EB[id];
     }
 };
 
