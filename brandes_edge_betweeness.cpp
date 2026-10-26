@@ -134,6 +134,10 @@ public:
         if (id < 0) return -1.0;
         return EB[id];
     }
+
+    int count_edges() {
+        return edges.size();
+    }
 };
 
 #ifdef STANDALONE_BRANDES

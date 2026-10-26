@@ -88,6 +88,7 @@ void verify_permutation_and_queries(const std::vector<int>& perm, int Q_queries,
 
     std::cout << "[PASS] " << std::left << std::setw(42) << test_name
               << " | V = " << std::setw(3) << V
+              << " | E = " << std::setw(5) << std_solver.count_edges()
               << " | V^2 pairs checked"
               << " | Random Queries Q = " << std::setw(6) << Q_queries
               << " | V_CDQ = " << std::setw(4) << cdq_solver.num_nodes
@@ -129,7 +130,15 @@ void test_random_permutations() {
         std::vector<int> perm(V);
         std::iota(perm.begin(), perm.end(), 1);
         std::shuffle(perm.begin(), perm.end(), rng);
-        verify_permutation_and_queries(perm, 5000, "Random Permutation (V=" + std::to_string(V) + ")");
+        verify_permutation_and_queries(perm, 100000, "Random Permutation (V=" + std::to_string(V) + ")");
+    }
+
+    std::cout << "\n=== 4. ĐỒ THỊ ĐẦY ĐỦ THEO TRONG V BÊN TRÊN ===\n";
+
+    for (int V : sizes) {
+        std::vector<int> perm(V);
+        std::iota(perm.rbegin(), perm.rend(), 1);
+        verify_permutation_and_queries(perm, 100000, "Complete Graph (V=" + std::to_string(V) + ")");
     }
 }
 
